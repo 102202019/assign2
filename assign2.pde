@@ -6,7 +6,11 @@ float rightCar1X, rightCar1Y, rightCar1W, rightCar1H;//car3
 float rightCar2X, rightCar2Y, rightCar2W, rightCar2H;//car4
 float pondY;
 
-float speed;
+float speedP;
+float speedQ;
+float speedR;
+float speedS;
+
 
 int life;
 
@@ -29,7 +33,10 @@ void setup(){
   // initial state
   gameState = GAME_START;
   
-  speed = 5;
+  speedP = 5;
+  speedQ = 7;
+  speedR = 13;
+  speedS = 9;
   
   // the Y position of Pond
   pondY = 32;
@@ -95,28 +102,93 @@ void draw(){
         // -------------------------------
         
          //car1 move
-         leftCar1X += speed;
+         leftCar1X  += speedP;
          if (leftCar1X > width){
              leftCar1X = 0;
          }
          image(imgLeftCar1, leftCar1X, leftCar1Y);
   
          //car2 move
+         leftCar2X  += speedQ;
+          if (leftCar2X > width){
+             leftCar2X = 0;
+         }
          image(imgLeftCar2, leftCar2X, leftCar2Y);
-  
+        
          //car3 move
+         rightCar1X -= speedR;
+          if (rightCar1X < 0){
+             rightCar1X = width;
+         }
          image(imgRightCar1, rightCar1X, rightCar1Y);
-
+  
          //car4 move
+           rightCar2X -= speedS;
+           if (rightCar2X <0){
+             rightCar2X = width;
+         }      
          image(imgRightCar2, rightCar2X, rightCar2Y);
   
          float frogCX = frogX+frogW/2;
          float frogCY = frogY+frogH/2;
+         
          // car1 hitTest
+           if ((leftCar1X >  frogX-frogW/2)&&
+              (leftCar1X < frogX+frogH/2)&&
+              (leftCar1Y < frogY+frogH/2)&&
+              (leftCar1Y > frogY-frogH/2))
+              {
+             image(imgDeadFrog, frogX, frogY);
+             life--;
+             gameState = FROG_DIE;
+           } 
+       
          // car2 hitTest
+         if ((leftCar2X >  frogX-frogW/2)&&
+              (leftCar2X < frogX+frogH/2)&&
+              (leftCar2Y < frogY+frogH/2)&&
+              (leftCar2Y > frogY-frogH/2))
+              {
+             image(imgDeadFrog, frogX, frogY);
+             life--;
+             gameState = FROG_DIE;
+           } 
+           
          // car3 hitTest
+         if ((rightCar1X >  frogX-frogW/2)&&
+              (rightCar1X < frogX+frogH/2)&&
+              (rightCar1Y < frogY+frogH/2)&&
+              (rightCar1Y > frogY-frogH/2))
+              {
+             image(imgDeadFrog, frogX, frogY);
+             life--;
+             gameState = FROG_DIE;
+           }
+           
          // car4 hitTest
+         if ((rightCar2X >  frogX-frogW/2)&&
+              (rightCar2X < frogX+frogH/2)&&
+              (rightCar2Y < frogY+frogH/2)&&
+              (rightCar2Y > frogY-frogH/2))
+              {
+             image(imgDeadFrog, frogX, frogY);
+             life--;
+             gameState = FROG_DIE;
+           } 
+         if (life == 0){
+           gameState = GAME_LOSE;
+         }
+          
+         if(frogY==32){
+            gameState=GAME_WIN;
+          }
+          
+          if (life ==0){
+            gameState = GAME_LOSE;
+          }
+       
         break;
+        
     case GAME_WIN:
         background(0);
         image(imgWinFrog,207,164);
@@ -129,16 +201,52 @@ void draw(){
         fill(255);
         text("You Lose",240,height/4); 
         break;
-  }
+      }
 }
+
+         
 void keyPressed() {
     if (key == CODED /*still needs something*/) {
-
+     switch(keyCode){ 
+      case UP:
+       frogY-=frogH;
+       break;
+       
+       case DOWN:
+       frogY+=frogH;
+       break;
+       
+       case LEFT:
+       frogX-=frogW;
+       break;
+       
+       case RIGHT:
+       frogX+=frogW;
+       break;
+       
+       }
     }
+    
+    if (frogX >width){
+        frogX = 0;
+       }    
+    if (frogX <0){
+        frogX = width;
+       }   
+    if (frogY <0){
+        frogY = height;
+       }  
+    if (frogY >height){
+        frogY = 0;
+       }       
+     
     if(key==ENTER /*still needs something*/){
       gameState = GAME_RUN;
       life=3;
       frogX = frogInitX;
       frogY = frogInitY;
     }
+    
+    
+         
 }
